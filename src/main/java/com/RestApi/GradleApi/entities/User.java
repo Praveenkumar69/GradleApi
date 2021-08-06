@@ -13,15 +13,11 @@ import javax.validation.constraints.Size;
 public class User {
 
     @Id
-//    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
-    @NotBlank
-    @Size(min=2, max=30)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private int id;
     private String username;
 
-    @Email(message = "Email invalid")
     @Column(unique = true,name = "email")
-    @NotBlank(message = "Email is mandatory")
     private String email;
 
     @NotBlank
@@ -33,7 +29,7 @@ public class User {
     @Pattern(regexp = "^(?=.*\\d).{4,8}$", flags = Pattern.Flag.UNICODE_CASE)
     private String passwordConfirmation;
 
-    public User(Long id, String username, String email, String password, String passwordConfirmation) {
+    public User(int id, String username, String email, String password, String passwordConfirmation) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -41,11 +37,11 @@ public class User {
         this.passwordConfirmation = passwordConfirmation;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
