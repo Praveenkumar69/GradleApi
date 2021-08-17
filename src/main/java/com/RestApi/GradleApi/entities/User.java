@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Entity @NoArgsConstructor
+@Entity @AllArgsConstructor @NoArgsConstructor
 public class User {
 
     @Id
@@ -29,13 +29,13 @@ public class User {
     @Pattern(regexp = "^(?=.*\\d).{4,8}$", flags = Pattern.Flag.UNICODE_CASE)
     private String passwordConfirmation;
 
-    public User(int id, String username, String email, String password, String passwordConfirmation) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.passwordConfirmation = passwordConfirmation;
-    }
+//    public User(int id, String username, String email, String password, String passwordConfirmation) {
+//        this.id = id;
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//        this.passwordConfirmation = passwordConfirmation;
+//    }
 
     public int getId() {
         return id;
