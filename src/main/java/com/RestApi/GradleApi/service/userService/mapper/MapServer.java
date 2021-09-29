@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,34 +51,60 @@ public class MapServer {
     }
 
 
-//    public List<UserDto> getAllUserPassword(){
-//        return passwordRepo.findAll().stream().map(this::convertToUserPasswordDTO).
-//                collect(Collectors.toList());
-//    }
-//
-//    private UserDto convertToUserPasswordDTO(Password password){
-//        UserDto userDto = new UserDto();
-//        userDto.setUserId(password.getUser().getUserid());
-//        userDto.setUsername(password.getUser().getUsername());
-//        userDto.setEmail(password.getUser().getEmail());
-//        userDto.setPassword(password.getPassword());
-//        return userDto;
-//   }
-//
-//   public void addPassword(UserDto userDto){
-//       User user = new ModelMapper().map(userDto,User.class);
-//       userRepo.save(user);
-//       userDto.setPassword(userDto.getPassword());
-//       passwordRepo.save(getPasswordEntity(userDto,user));
-//   }
-//
-//    private Password getPasswordEntity(UserDto userDto, User user) {
-//        Password password = new Password();
-//        password.setPassword(userDto.getPassword());
-//        password.setCreatedAt(LocalDateTime.now());
-//        password.setUser(user);
-//        userDto.setPassword(userDto.getPassword());
-//        passwordRepo.save(getPasswordEntity(userDto,user));
-//        return password;
-//    }
+    public String change_password(String email) {
+
+        Optional<User> userOptional = Optional
+                .ofNullable(userRepo.findByEmail(email));
+
+        if (!userOptional.isPresent()) {
+            return "Invalid email id.";
+        }
+
+        User user = userOptional.get();
+        user.setToken(generateToken());
+//        user.setTokenCreationDate(LocalDateTime.now());
+
+        user = userRepo.save(user);
+
+        return user.getToken();
+    }
+
+    private String generateToken(){
+        StringBuffer Token = new StringBuffer();
+
+        return Token.append(UUID.randomUUID().toString()).
+                append(UUID.randomUUID().toString()).toString();
+    }
+
+    public String passwordProcess(String token,String oldPassword,String newPassword,String confirmPassword){
+        Optional<User> userOptional = Optional.
+                ofNullable(userRepo.findByToken(token));
+
+        if (!userOptional.isPresent()){
+            return "Invalid token.";
+        }
+        // Create new expire password
+        User user = userOptional.get();
+        if (!encoder.matches(oldPassword, user.getPassword().getPassword())) {
+            return "Your old password is incorrect.";
+        }
+
+        if (oldPassword.equals(newPassword)) {
+            return "Your new password must be different than the old one.";
+        }
+
+        if (!newPassword.equals(confirmPassword)){
+            return "Passwords do not match!";
+        }
+//        System.out.println("userPassword = " + user + " newPassword " + newPassword + " confirmPassword " + confirmPassword + " oldPassword " + oldPassword);
+        user.getPassword().setPassword(encoder.encode(newPassword));
+        user.getPassword().setPasswordChangedTime(new Date());
+        user.getPassword().setUpdatedAt(new Date());
+
+        userRepo.save(user);
+        return "Your password successfully updated.";
+    }
+
+
+
 }

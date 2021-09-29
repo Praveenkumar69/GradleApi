@@ -34,11 +34,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
-//    public void messgeDigest(){
-//        String s = "praveen";
-//        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-//        messageDigest.digest(s.getBytes(StandardCharsets.UTF_8));
-//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,11 +50,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
-                .antMatchers("/register").permitAll().anyRequest().authenticated()
-                .and().exceptionHandling().and().sessionManagement()
+        http.csrf().disable().authorizeRequests().
+                antMatchers("/authenticate").permitAll().
+                antMatchers("/register").permitAll().
+                antMatchers("/change_password").permitAll().
+                antMatchers("/login").permitAll().
+                antMatchers("/password_change_process").permitAll()
+                .anyRequest().authenticated().and()
+                .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtFiler, UsernamePasswordAuthenticationFilter.class);;
+        http.addFilterBefore(jwtFiler, UsernamePasswordAuthenticationFilter.class);
     }
 
 }

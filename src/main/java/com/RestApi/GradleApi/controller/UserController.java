@@ -41,8 +41,13 @@ public class UserController {
     private PasswordRepo passwordRepo;
 
     @GetMapping("/")
-    public String welcome() {
+    public String hello() {
         return "Welcome to hello world";
+    }
+
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "Welcome to hello worlds";
     }
 
     @PostMapping("/register")
@@ -64,6 +69,25 @@ public class UserController {
         return "User Registered Successfully";
     }
 
+    @PostMapping("/change_password")
+    public String change_password(@RequestParam String email){
+
+        String response = mapServer.change_password(email);
+
+        if (!response.startsWith("Invalid")){
+            response = "http://localhost:8080/password_change_process?token=" + response;
+        }
+//        return "Login again!! You have change your password successfully.";
+        return response;
+    }
+
+    @PutMapping("/password_change_process")
+    public String passwordProcess(@RequestParam String token,@RequestParam String oldPassword,String newPassword,String confirmPassword){
+
+
+        return mapServer.passwordProcess(token,oldPassword,newPassword,confirmPassword);
+    }
+
     @PostMapping("/authenticate")
     public String generateToken(@RequestBody AuthRequest authRequest){
 
@@ -78,37 +102,5 @@ public class UserController {
 
         return jwtUtil.generateToken(authRequest.getUsername());
     }
-
-//    @PostMapping("/authenticate")
-//    public ResponseEntity<?> generateTokens(@RequestBody AuthRequest authRequest) throws Exception {
-//        try {
-//            authenticationManager
-//                    .authenticate(
-//                            new UsernamePasswordAuthenticationToken(
-//                                    authRequest.getUsername(), authRequest.getPassword()
-//                            )
-//                    );
-//
-////            User user = (User) authenticate.getPrincipal();
-////
-//            return ResponseEntity.ok()
-//                    .header(
-//                            HttpHeaders.AUTHORIZATION,
-//                            jwtUtil.generateToken(authRequest.getUsername())
-//                    ).body(authRequest);
-//        } catch (Exception ex) {
-//            EmailAlreadyExists exists = new EmailAlreadyExists("invalid username/password");
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exists);
-//        }
-////        return jwtUtil.generateToken(authRequest.getUsername());
-////        return null;
-//    }
-
-
-    //    @PostMapping("/user/save")
-//    public ResponseEntity<User>saveUser(@RequestBody User user) throws EmailAlreadyExists {
-//        return ResponseEntity.ok().body(userService.saveUser(user));
-//    }
-
 
 }

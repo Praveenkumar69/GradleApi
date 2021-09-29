@@ -9,9 +9,6 @@ import java.util.Optional;
 
 public interface PasswordService {
 
-//    Boolean saveUserPassword(Password password);
-//    Boolean getPassword(String password);
-
 
     Optional<User> findByUsername(String username);
 

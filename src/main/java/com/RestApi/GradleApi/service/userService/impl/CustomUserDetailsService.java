@@ -20,21 +20,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private PasswordRepo passwordRepo;
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = userRepo.findByUsername(username);
-//        if(user != null) {
-//            System.out.println(user.toString());
-//            return (UserDetails) user;
-//        }
-//        throw new UsernameNotFoundException("User "+ username +" not found");
-//    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
+        if (user != null) {
+            System.out.println(user.toString());
+            return new UserDetailsImpl(user);
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword().getPassword(),new ArrayList<>());
+        } else {
+            throw new UsernameNotFoundException("User " + username + " not found");
+        }
     }
-
 }
+
+

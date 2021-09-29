@@ -21,6 +21,7 @@ public class User {
     @Column(unique = true,name = "email")
     private String email;
 
+    private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "passwordId",referencedColumnName = "passwordId")
